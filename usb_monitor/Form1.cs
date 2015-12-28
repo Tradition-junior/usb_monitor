@@ -17,12 +17,12 @@ namespace usb_monitor
 {
     public partial class Form1 : Form
     {
-        string s;
-        string current_us;
-        static string abc = "";
-        UsbDeviceFinder MyUsbFinder = new UsbDeviceFinder(Convert.ToInt32("0x1366", 16), Convert.ToInt32("0x0105", 16));
+        UsbDeviceFinder MyUsbFinder;
+            //= new UsbDeviceFinder(Convert.ToInt32("0x1366", 16), Convert.ToInt32("0x0105", 16));
+        //UsbDeviceFinder MyUsbFinder = new UsbDeviceFinder(Convert.ToInt32("0x046D", 16), Convert.ToInt32("0xC517", 16));
 
         public static UsbDevice MyUsbDevice;
+        device[] devices;
 
         public Form1()
         {
@@ -33,41 +33,28 @@ namespace usb_monitor
         {
             
             UsbRegDeviceList allDevices = UsbDevice.AllDevices;
-            string[] vid = new string[allDevices.Count];
-            string[] pid = new string[allDevices.Count];
-            string[] s = new string[allDevices.Count];
+            devices = new device[allDevices.Count];
             int i = 0;
             foreach (UsbRegistry usbRegistry in allDevices)
             {
-                int j = 0;
+
                 if (usbRegistry.Open(out MyUsbDevice))
                 {
-                    s[i] = MyUsbDevice.Info.ToString();
-                    j = s[i].IndexOf("Vendor") + 9;
-                    while (s[i][j] != '\n')
-                    {
-                        vid[i] += s[i][j];
-                        j++;
-                    }
-
-                    j = s[i].IndexOf("ProductID") + 10;
-                    while (s[i][j] != '\n')
-                    {
-                        pid[i] += s[i][j];
-                        j++;
-                    }
-                    textBox1.Text = textBox1.Text + s[i];
+                    devices[i] = new device(MyUsbDevice.Info.ToString());
+                    textBox1.Text += devices[i].Info;                      
                 }
                 i++;
-
             }
-            
+            comboBox1.DataSource = devices;
+            comboBox1.DisplayMember = "Name";
+            comboBox1.SelectedIndex = -1;
         }
 
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (comboBox1.SelectedIndex!=-1)
+            MyUsbFinder = new UsbDeviceFinder(Convert.ToInt32(devices[comboBox1.SelectedIndex].Vid, 16), Convert.ToInt32(devices[comboBox1.SelectedIndex].Pid, 16));
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -78,7 +65,7 @@ namespace usb_monitor
             {
                 //открываем поток
                 MyUsbDevice = UsbDevice.OpenUsbDevice(MyUsbFinder);
-
+               
                 if (MyUsbDevice == null) throw new Exception("Device Not Found.");
 
                 IUsbDevice wholeUsbDevice = MyUsbDevice as IUsbDevice;
@@ -132,6 +119,16 @@ namespace usb_monitor
         private void button2_Click(object sender, EventArgs e)
         {
             timer1.Start();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = " ";
         }
     }
 }
