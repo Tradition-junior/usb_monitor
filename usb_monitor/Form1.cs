@@ -20,6 +20,7 @@ namespace usb_monitor
         string s;
         string current_us;
         static string abc = "";
+        UsbDeviceFinder MyUsbFinder = new UsbDeviceFinder(Convert.ToInt32("0x1366", 16), Convert.ToInt32("0x0105", 16));
 
         public static UsbDevice MyUsbDevice;
 
@@ -30,36 +31,52 @@ namespace usb_monitor
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ErrorCode ec = ErrorCode.None;
+            
             UsbRegDeviceList allDevices = UsbDevice.AllDevices;
-            string vid = "";
-            string pid = "";
+            string[] vid = new string[allDevices.Count];
+            string[] pid = new string[allDevices.Count];
+            string[] s = new string[allDevices.Count];
+            int i = 0;
             foreach (UsbRegistry usbRegistry in allDevices)
             {
-                int i = 0;
+                int j = 0;
                 if (usbRegistry.Open(out MyUsbDevice))
                 {
-                    s = MyUsbDevice.Info.ToString();
-                    i = s.IndexOf("Vendor") + 9;
-                    while (s[i] != '\n')
+                    s[i] = MyUsbDevice.Info.ToString();
+                    j = s[i].IndexOf("Vendor") + 9;
+                    while (s[i][j] != '\n')
                     {
-                        vid += s[i];
-                        i++;
+                        vid[i] += s[i][j];
+                        j++;
                     }
 
-                    i = s.IndexOf("ProductID") + 10;
-                    while (s[i] != '\n')
+                    j = s[i].IndexOf("ProductID") + 10;
+                    while (s[i][j] != '\n')
                     {
-                        pid += s[i];
-                        i++;
+                        pid[i] += s[i][j];
+                        j++;
                     }
-
-                    textBox1.Text = textBox1.Text + "\n" + s + vid + pid;
+                    textBox1.Text = textBox1.Text + s[i];
                 }
+                i++;
+
             }
-            UsbDeviceFinder MyUsbFinder = new UsbDeviceFinder(Convert.ToInt32("0x0810", 16), Convert.ToInt32("0x0003", 16));
+            
+        }
+
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            
+            ErrorCode ec = ErrorCode.None;
             try
             {
+                //открываем поток
                 MyUsbDevice = UsbDevice.OpenUsbDevice(MyUsbFinder);
 
                 if (MyUsbDevice == null) throw new Exception("Device Not Found.");
@@ -70,27 +87,29 @@ namespace usb_monitor
                     wholeUsbDevice.SetConfiguration(1);
                     wholeUsbDevice.ClaimInterface(0);
                 }
+
+                //читает 1ый эндпоинт
                 UsbEndpointReader reader = MyUsbDevice.OpenEndpointReader(ReadEndpointID.Ep01);
 
                 byte[] readBuffer = new byte[1024];
-                while (ec == ErrorCode.None)
-                {
-                    int bytesRead;
+                int bytesRead;
 
-                    ec = reader.Read(readBuffer, 5000, out bytesRead);
+                //Возвращает данные или ошибку, если через 5 секунд ничего не было возвращено
+                ec = reader.Read(readBuffer, 5000, out bytesRead);
+                if (bytesRead == 0) throw new Exception(string.Format("{0}:No more bytes!", ec));
 
-                    if (bytesRead == 0) throw new Exception(string.Format("{0}:No more bytes!", ec));
-                    textBox1.Text = textBox1.Text + "\n" + Encoding.Default.GetString(readBuffer, 0, bytesRead);
-                }
+                textBox2.Text = textBox2.Text + "\n" + Encoding.Default.GetString(readBuffer, 0, bytesRead);
 
-                Console.WriteLine("\r\nDone!\r\n");
             }
             catch (Exception ex)
             {
+                //кидает ошибку и останавливает таймер при ошибке
+                timer1.Stop();
                 MessageBox.Show((ec != ErrorCode.None ? ec + ":" : String.Empty) + ex.Message);
             }
             finally
             {
+                //закрывает поток
                 if (MyUsbDevice != null)
                 {
                     if (MyUsbDevice.IsOpen)
@@ -110,10 +129,9 @@ namespace usb_monitor
             }
         }
 
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
-
+            timer1.Start();
         }
     }
 }
