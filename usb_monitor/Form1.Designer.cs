@@ -123,17 +123,29 @@
             // 
             // chart1
             // 
+            chartArea1.AxisX.Minimum = 0D;
+            chartArea1.AxisX.ScaleBreakStyle.CollapsibleSpaceThreshold = 10;
+            chartArea1.AxisX.TitleAlignment = System.Drawing.StringAlignment.Near;
+            chartArea1.AxisY.Interval = 5D;
+            chartArea1.AxisY.MajorGrid.Interval = 5D;
             chartArea1.CursorX.Interval = 6D;
             chartArea1.Name = "ChartArea1";
             this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Location = new System.Drawing.Point(927, 13);
             this.chart1.Name = "chart1";
-            this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Pastel;
+            this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.SemiTransparent;
             this.chart1.PaletteCustomColors = new System.Drawing.Color[] {
-        System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))))};
+        System.Drawing.Color.Red,
+        System.Drawing.Color.Red,
+        System.Drawing.Color.Red,
+        System.Drawing.Color.Red,
+        System.Drawing.Color.Empty,
+        System.Drawing.Color.Empty,
+        System.Drawing.Color.Empty};
             this.chart1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.MarkerBorderWidth = 5;
             series1.Name = "Series1";
             this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(423, 490);

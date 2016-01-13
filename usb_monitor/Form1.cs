@@ -43,7 +43,7 @@ namespace usb_monitor
                 if (usbRegistry.Open(out MyUsbDevice))
                 {
                     devices[i] = new device(MyUsbDevice.Info.ToString());
-                    textBox1.Text += devices[i].Info;                      
+                    textBox1.Text = textBox1.Text + devices[i].Info + "\r\n";                      
                 }
                 i++;
             }
@@ -85,13 +85,13 @@ namespace usb_monitor
 
                 //Возвращает данные или ошибку, если через 5 секунд ничего не было возвращено
                 ec = reader.Read(readBuffer, 5000, out bytesRead);
-                temp.SetValueXY(bytesRead, i);
+                
+                if (bytesRead == 0) throw new Exception(string.Format("{0}:No more bytes!", ec));
+                temp.SetValueXY(i, Convert.ToDouble(Encoding.Default.GetString(readBuffer, 0, bytesRead).Replace('.', ',')));
                 i++;
                 chart1.Series[0].Points.Add(temp);
                 data.Add(bytesRead);
-                if (bytesRead == 0) throw new Exception(string.Format("{0}:No more bytes!", ec));
-
-                textBox2.Text = textBox2.Text + "\n" + Encoding.Default.GetString(readBuffer, 0, bytesRead);
+                textBox2.Text = textBox2.Text + Encoding.Default.GetString(readBuffer, 0, bytesRead) + "\r\n";
 
             }
             catch (Exception ex)
