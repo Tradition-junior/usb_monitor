@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.Windows.Forms.DataVisualization.Charting;
 using LibUsbDotNet;
 using LibUsbDotNet.Info;
 using LibUsbDotNet.Main;
@@ -22,10 +23,12 @@ namespace usb_monitor
 
         public static UsbDevice MyUsbDevice;
         device[] devices;
-
+        List<int> data = new List<int>();
+        int i = 0;
         public Form1()
         {
             InitializeComponent();
+           
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -58,13 +61,13 @@ namespace usb_monitor
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            
+            DataPoint temp = new DataPoint();
             ErrorCode ec = ErrorCode.None;
             try
             {
                 //открываем поток
                 MyUsbDevice = UsbDevice.OpenUsbDevice(MyUsbFinder);
-               
+
                 if (MyUsbDevice == null) throw new Exception("Device Not Found.");
 
                 IUsbDevice wholeUsbDevice = MyUsbDevice as IUsbDevice;
@@ -82,6 +85,10 @@ namespace usb_monitor
 
                 //Возвращает данные или ошибку, если через 5 секунд ничего не было возвращено
                 ec = reader.Read(readBuffer, 5000, out bytesRead);
+                temp.SetValueXY(bytesRead, i);
+                i++;
+                chart1.Series[0].Points.Add(temp);
+                data.Add(bytesRead);
                 if (bytesRead == 0) throw new Exception(string.Format("{0}:No more bytes!", ec));
 
                 textBox2.Text = textBox2.Text + "\n" + Encoding.Default.GetString(readBuffer, 0, bytesRead);
@@ -129,5 +136,6 @@ namespace usb_monitor
         {
             textBox1.Text = " ";
         }
+
     }
 }

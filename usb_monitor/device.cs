@@ -26,6 +26,7 @@ namespace usb_monitor
         {
             get { return name; }
         }
+
         public string Info
         {
             get { return info; }
@@ -48,7 +49,7 @@ namespace usb_monitor
         {
             int j = 0;
             j = info.IndexOf("Vendor") + 9;
-            string tmp = "";
+
 
             while (info[j] != '\r')
             {
