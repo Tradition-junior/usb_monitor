@@ -42,6 +42,8 @@
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.form1BindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource1)).BeginInit();
@@ -63,7 +65,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 29);
             this.button1.TabIndex = 1;
-            this.button1.Text = "get";
+            this.button1.Text = "Refresh";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -78,7 +80,6 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // textBox2
@@ -97,7 +98,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 24);
             this.button2.TabIndex = 4;
-            this.button2.Text = "start";
+            this.button2.Text = "Connect";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -107,7 +108,7 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 24);
             this.button3.TabIndex = 5;
-            this.button3.Text = "stop";
+            this.button3.Text = "Stop";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -117,7 +118,7 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 24);
             this.button4.TabIndex = 6;
-            this.button4.Text = "clear";
+            this.button4.Text = "Clear";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
@@ -160,11 +161,24 @@
             // 
             this.form1BindingSource1.DataSource = typeof(usb_monitor.Form1);
             // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(386, 13);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(59, 24);
+            this.comboBox2.TabIndex = 8;
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 10000;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1362, 579);
+            this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
@@ -196,6 +210,8 @@
         private System.Windows.Forms.BindingSource form1BindingSource;
         private System.Windows.Forms.BindingSource form1BindingSource1;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.Timer timer2;
     }
 }
 
