@@ -40,18 +40,23 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.form1BindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.способЧтенияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.usbLabDotNetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cOMPortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.form1BindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(13, 13);
+            this.textBox1.Location = new System.Drawing.Point(13, 45);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
@@ -61,7 +66,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(139, 528);
+            this.button1.Location = new System.Drawing.Point(139, 560);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 29);
             this.button1.TabIndex = 1;
@@ -72,7 +77,7 @@
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(451, 13);
+            this.comboBox1.Location = new System.Drawing.Point(451, 45);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(189, 24);
             this.comboBox1.TabIndex = 2;
@@ -84,7 +89,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(451, 43);
+            this.textBox2.Location = new System.Drawing.Point(451, 75);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
@@ -94,7 +99,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(659, 13);
+            this.button2.Location = new System.Drawing.Point(659, 45);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 24);
             this.button2.TabIndex = 4;
@@ -104,7 +109,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(747, 13);
+            this.button3.Location = new System.Drawing.Point(747, 45);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 24);
             this.button3.TabIndex = 5;
@@ -114,7 +119,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(837, 13);
+            this.button4.Location = new System.Drawing.Point(837, 45);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 24);
             this.button4.TabIndex = 6;
@@ -132,7 +137,7 @@
             chartArea1.CursorX.Interval = 6D;
             chartArea1.Name = "ChartArea1";
             this.chart1.ChartAreas.Add(chartArea1);
-            this.chart1.Location = new System.Drawing.Point(927, 13);
+            this.chart1.Location = new System.Drawing.Point(927, 45);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.SemiTransparent;
             this.chart1.PaletteCustomColors = new System.Drawing.Color[] {
@@ -153,6 +158,52 @@
             this.chart1.TabIndex = 7;
             this.chart1.Text = "chart1";
             // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(386, 45);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(59, 24);
+            this.comboBox2.TabIndex = 8;
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 1000;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.способЧтенияToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1371, 28);
+            this.menuStrip1.TabIndex = 9;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // способЧтенияToolStripMenuItem
+            // 
+            this.способЧтенияToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.usbLabDotNetToolStripMenuItem,
+            this.cOMPortToolStripMenuItem});
+            this.способЧтенияToolStripMenuItem.Name = "способЧтенияToolStripMenuItem";
+            this.способЧтенияToolStripMenuItem.Size = new System.Drawing.Size(125, 24);
+            this.способЧтенияToolStripMenuItem.Text = "Способ чтения";
+            // 
+            // usbLabDotNetToolStripMenuItem
+            // 
+            this.usbLabDotNetToolStripMenuItem.Name = "usbLabDotNetToolStripMenuItem";
+            this.usbLabDotNetToolStripMenuItem.Size = new System.Drawing.Size(182, 26);
+            this.usbLabDotNetToolStripMenuItem.Text = "UsbLabDotNet";
+            this.usbLabDotNetToolStripMenuItem.Click += new System.EventHandler(this.usbLabDotNetToolStripMenuItem_Click);
+            // 
+            // cOMPortToolStripMenuItem
+            // 
+            this.cOMPortToolStripMenuItem.Name = "cOMPortToolStripMenuItem";
+            this.cOMPortToolStripMenuItem.Size = new System.Drawing.Size(182, 26);
+            this.cOMPortToolStripMenuItem.Text = "COM Port";
+            this.cOMPortToolStripMenuItem.Click += new System.EventHandler(this.cOMPortToolStripMenuItem_Click);
+            // 
             // form1BindingSource
             // 
             this.form1BindingSource.DataSource = typeof(usb_monitor.Form1);
@@ -161,23 +212,11 @@
             // 
             this.form1BindingSource1.DataSource = typeof(usb_monitor.Form1);
             // 
-            // comboBox2
-            // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(386, 13);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(59, 24);
-            this.comboBox2.TabIndex = 8;
-            // 
-            // timer2
-            // 
-            this.timer2.Interval = 10000;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1362, 579);
+            this.ClientSize = new System.Drawing.Size(1371, 600);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.button4);
@@ -187,9 +226,13 @@
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "usb monitor";
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -212,6 +255,10 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.ToolStripMenuItem способЧтенияToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem usbLabDotNetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cOMPortToolStripMenuItem;
+        private System.Windows.Forms.MenuStrip menuStrip1;
     }
 }
 

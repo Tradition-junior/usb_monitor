@@ -8,6 +8,9 @@ using System.Windows.Forms.DataVisualization.Charting;
 using LibUsbDotNet;
 using LibUsbDotNet.Info;
 using LibUsbDotNet.Main;
+using System.IO.Ports;
+using System.Management;
+
 
 
 namespace usb_monitor
@@ -19,13 +22,16 @@ namespace usb_monitor
         //UsbDeviceFinder MyUsbFinder = new UsbDeviceFinder(Convert.ToInt32("0x046D", 16), Convert.ToInt32("0xC517", 16));
 
         public static UsbDevice MyUsbDevice;
-        device[] devices;
         List<int> data = new List<int>();
         int i;
         private bool trying;
+        private int method;
+        private List<USBDeviceInfo> devices_libusb;
+        private List<USBDeviceInfo> devices_com;
 
         public Form1()
         {
+
             InitializeComponent();
             ReadEndpointID[] endpoints =
             {
@@ -33,8 +39,9 @@ namespace usb_monitor
                 ReadEndpointID.Ep04, ReadEndpointID.Ep05, ReadEndpointID.Ep06
             };
             comboBox2.DataSource = endpoints;
+            method = 1;
             get_list();
-            timer2.Start();
+            //timer2.Start();
             comboBox1.SelectedIndex = -1;
         }
 
@@ -46,36 +53,49 @@ namespace usb_monitor
 
         private void get_list()
         {
-            UsbRegDeviceList allDevices = UsbDevice.AllDevices;
-            int tmp = comboBox1.SelectedIndex;
-            devices = new device[allDevices.Count];
-            int i = 0;
-            textBox1.Clear();
-            foreach (UsbRegistry usbRegistry in allDevices)
+            devices_libusb = GetUSBDevices(1);
+            devices_com = GetUSBDevices(2);
+            List<USBDeviceInfo> tmp_dev = new List<USBDeviceInfo>();
+            tmp_dev.AddRange(devices_libusb);
+            tmp_dev.AddRange(devices_com);
+            foreach (USBDeviceInfo usbDevice in tmp_dev)
             {
-                if (usbRegistry.Open(out MyUsbDevice))
-                {
-                    devices[i] = new device(MyUsbDevice.Info.ToString());
-                    textBox1.Text = textBox1.Text + devices[i].Info + "\r\n";
-                }
-                i++;
+                textBox1.Text += String.Format("VID: {0}\r\nPID: {1}\r\nDescription: {2}\r\nIf COM Device: {3}\r\n\r\n",
+                    usbDevice.VID, usbDevice.PID, usbDevice.Description, usbDevice.IfCOM);
             }
-            comboBox1.DataSource = devices;
-            comboBox1.DisplayMember = "Name";
-            comboBox1.SelectedIndex = -1;
-
+            if (method == 1)
+            {
+                comboBox1.DataSource = devices_libusb;
+                comboBox1.DisplayMember = "Name";
+                comboBox1.SelectedIndex = -1;
+            }
+            if (method == 2)
+            {
+                comboBox1.DataSource = devices_com;
+                comboBox1.DisplayMember = "Name";
+                comboBox1.SelectedIndex = -1;
+            }
         }
 
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedIndex != -1)
-                MyUsbFinder = new UsbDeviceFinder(Convert.ToInt32(devices[comboBox1.SelectedIndex].Vid, 16),
-                    Convert.ToInt32(devices[comboBox1.SelectedIndex].Pid, 16));
+            timer1.Stop();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            if(method==2)
+            new_connect();
+            if (method == 1)
+                connect();
+        }
+
+        private void connect()
+        {
+            if (comboBox1.SelectedIndex != -1)
+                MyUsbFinder = new UsbDeviceFinder(Convert.ToInt32(devices_libusb[comboBox1.SelectedIndex].VID, 16),
+                    Convert.ToInt32(devices_libusb[comboBox1.SelectedIndex].PID, 16));
             DataPoint temp = new DataPoint();
             ErrorCode ec = ErrorCode.None;
             try
@@ -93,7 +113,7 @@ namespace usb_monitor
                 }
 
                 //читает 1ый эндпоинт
-                UsbEndpointReader reader = MyUsbDevice.OpenEndpointReader((ReadEndpointID) comboBox2.SelectedItem);
+                UsbEndpointReader reader = MyUsbDevice.OpenEndpointReader((ReadEndpointID)comboBox2.SelectedItem);
 
                 byte[] readBuffer = new byte[1024];
                 int bytesRead;
@@ -117,16 +137,7 @@ namespace usb_monitor
                 {
                     trying = false;
                 }
-                //string[] tmp = Encoding.Default.GetString(readBuffer, 0, bytesRead).Split(' ');
-                //tmp[2] = tmp[2].Trim('\n', '\r', 'F');
-                //string ans = "";
-                //for(int i =0; i<3; i++)
-                //{
-                //    ans = ans + Convert.ToInt32(tmp[i], 16).ToString()+" ";
-                //}
-                //textBox2.AppendText(ans + "\r\n");
                 textBox2.AppendText(Encoding.Default.GetString(readBuffer, 0, bytesRead));
-              // textBox2.Text = ans;
             }
             catch (Exception ex)
             {
@@ -155,6 +166,21 @@ namespace usb_monitor
             }
         }
 
+        private string s ="";
+        private void new_connect()
+        {
+            SerialPort port = new SerialPort(devices_com[comboBox1.SelectedIndex].COM);
+            port.RtsEnable = true;
+            port.DtrEnable = true;
+            port.Open();
+            byte[] buffer = new byte[port.BytesToRead];
+            port.Read(buffer, 0, port.BytesToRead);
+            s += Encoding.Default.GetString(buffer);
+            textBox2.AppendText(Encoding.Default.GetString(buffer));
+            port.Close();
+
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             timer1.Start();
@@ -171,5 +197,58 @@ namespace usb_monitor
             textBox2.Clear();
         }
 
+        private void usbLabDotNetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            method = 1;
+            timer1.Stop();
+            comboBox1.DataSource = devices_libusb;
+        }
+
+        static List<USBDeviceInfo> GetUSBDevices(int type)
+        {
+            List<USBDeviceInfo> devices = new List<USBDeviceInfo>();
+            ManagementObjectCollection collection;
+
+            if (type == 1)
+
+            {
+            using (var searcher = new ManagementObjectSearcher(@"Select * From Win32_USBHub"))
+                collection = searcher.Get();
+            foreach (var device in collection)
+            {
+                devices.Add(new USBDeviceInfo(
+                    (string) device.GetPropertyValue("DeviceID"),
+                    (string) device.GetPropertyValue("PNPDeviceID"),
+                    (string) device.GetPropertyValue("Description")
+                    ));
+            }
+
+            collection.Dispose();
+            }
+
+            if (type == 2)
+            {
+                using (var searcher = new ManagementObjectSearcher(@"Select * From Win32_SerialPort"))
+                    collection = searcher.Get();
+                foreach (var device in collection)
+                {
+                    devices.Add(new USBDeviceInfo(
+                        (string) device.GetPropertyValue("DeviceID"),
+                        (string) device.GetPropertyValue("PNPDeviceID"),
+                        (string) device.GetPropertyValue("Description")
+                        ));
+                }
+                collection.Dispose();
+            }
+            return devices;
+        }
+
+        private void cOMPortToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            method = 2;
+            timer1.Stop();
+            comboBox1.DataSource = devices_com;
+        }
+ 
     }
 }

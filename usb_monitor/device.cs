@@ -6,78 +6,69 @@ using System.Threading.Tasks;
 
 namespace usb_monitor
 {
-    class device
+    class USBDeviceInfo
     {
-        string info;
-        string vid;
-        string pid;
-        string manufacturer;
-        string product;
-        string name;
-
-        public device(string info)
+        public USBDeviceInfo(string deviceID, string pnpDeviceID, string description)
         {
-            this.info = info;
+            this.DeviceID = deviceID;
+            this.PnpDeviceID = pnpDeviceID;
+            this.Description = description;
             parse();
-            name = manufacturer + " " + product;
+
         }
 
-        public string Name
-        {
-            get { return name; }
+        public string DeviceID { get; private set; }
+        public string PnpDeviceID { get; private set; }
+        public string Description { get; private set; }
+        public string VID { get; private set; }
+        public string PID { get; private set; }
+        public string COM { get; private set; }
+        public bool IfCOM { get; private set; }
+        public string Name {
+            get { return VID + " " + PID; }
         }
-
-        public string Info
+    public void parse()
         {
-            get { return info; }
-            set { info = value; }
-        }
-
-        public string Pid
-        {
-            get { return pid; }
-            set { pid = value; }
-        }
-
-        public string Vid
-        {
-            get { return vid; }
-            set { vid = value; }
-        }
-
-        void parse()
-        {
-            int j = 0;
-            j = info.IndexOf("Vendor") + 9;
-
-
-            while (info[j] != '\r')
+            string tmp = DeviceID + PnpDeviceID;
+            int j = tmp.IndexOf("VID_");
+            if (j != -1)
             {
-                vid += info[j];
-                j++;
+                j += 4;
+                VID = "";
+                while (tmp[j] != '&')
+                {
+                    VID += tmp[j];
+                    j++;
+                }
             }
-            
-            j = info.IndexOf("ProductID") + 10;
-            while (info[j] != '\r')
-            {
-                pid += info[j];
-                j++;
-            }
+            else
+                VID = "null";
 
-
-            j = info.IndexOf("ManufacturerString:") + 19;
-            while (info[j] != '\r')
+            j = tmp.IndexOf("PID_");
+            if (j != -1)
             {
-                manufacturer += info[j];
-                j++;
+                j += 4;
+                PID = "";
+                while (tmp[j] != '\\')
+                {
+                    PID += tmp[j];
+                    j++;
+                }
             }
+            else
+                VID = "null";
 
-            j = info.IndexOf("ProductString:") + 14;
-            while (info[j] != '\r')
+            j = tmp.IndexOf("COM");
+            if (j != -1)
             {
-                product += info[j];
-                j++;
+                for (int i = 0; i < 4; i++, j++)
+                {
+                    COM += tmp[j];
+                }
+                IfCOM = true;
             }
+            else
+                COM = "null";
         }
     }
 }
