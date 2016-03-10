@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,8 +27,10 @@ namespace usb_monitor
         int i;
         private bool trying;
         private int method;
+        private int rate;
         private List<USBDeviceInfo> devices_libusb;
         private List<USBDeviceInfo> devices_com;
+        private bool reading;
 
         public Form1()
         {
@@ -38,10 +41,15 @@ namespace usb_monitor
                 ReadEndpointID.Ep01, ReadEndpointID.Ep02, ReadEndpointID.Ep03,
                 ReadEndpointID.Ep04, ReadEndpointID.Ep05, ReadEndpointID.Ep06
             };
+
+            int[] rates =
+            {110, 150, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200};
             comboBox2.DataSource = endpoints;
-            method = 1;
+            comboBox3.DataSource = rates;
+            comboBox3.SelectedIndex = 6;
+            rate = (int)comboBox3.SelectedValue;
+            method = 2;
             get_list();
-            //timer2.Start();
             comboBox1.SelectedIndex = -1;
         }
 
@@ -85,8 +93,8 @@ namespace usb_monitor
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if(method==2)
-            new_connect();
+            if (method == 2)
+                //new_connect();
             if (method == 1)
                 connect();
         }
@@ -166,29 +174,113 @@ namespace usb_monitor
             }
         }
 
-        private string s ="";
+        private SerialPort _serialPort;
+
         private void new_connect()
         {
-            SerialPort port = new SerialPort(devices_com[comboBox1.SelectedIndex].COM);
-            port.RtsEnable = true;
-            port.DtrEnable = true;
-            port.Open();
-            byte[] buffer = new byte[port.BytesToRead];
-            port.Read(buffer, 0, port.BytesToRead);
-            s += Encoding.Default.GetString(buffer);
-            textBox2.AppendText(Encoding.Default.GetString(buffer));
-            port.Close();
+            reading = true;
+            _serialPort = new SerialPort(devices_com[comboBox1.SelectedIndex].COM);
+            _serialPort.BaudRate = rate;
+            _serialPort.ReadTimeout = 500;
+            _serialPort.Open();
+            Thread th = new Thread(read);
+            th.Start();
 
+        }
+
+        private string fulltext = "";
+        private void read()
+        {
+            
+            while (reading)
+            {
+                try
+                {
+                    byte[] buffer = new byte[_serialPort.BytesToRead];
+                    _serialPort.Read(buffer, 0, _serialPort.BytesToRead);
+                    string ans = Encoding.Default.GetString(buffer);
+                    SetText(ans);
+                    //SetData(Convert.ToDouble(ans));
+                }
+                catch
+                {
+                }
+            }
+
+        }
+
+
+        delegate void SetTextCallback(string text);
+
+        string tmp = "";
+        private void SetText(string text)
+        {
+
+            try
+            {
+                if (textBox2.InvokeRequired)
+                {
+                    SetTextCallback d = SetText;
+                    textBox2.Invoke(d, text);
+                }
+                else
+                {
+                    tmp += text;
+                    textBox2.AppendText(text);
+                    if (tmp.IndexOf('\n') > 0)
+                    {
+                        if(double.Parse(tmp.Replace('.', ','))<50)
+                        SetData(double.Parse(tmp.Replace('.',',')));
+                        tmp = "";
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+        delegate void SetDataCallback(double num);
+        private void SetData(double num)
+        {
+            DataPoint temp = new DataPoint();
+            if (chart1.InvokeRequired)
+            {
+                SetDataCallback d = SetData;
+                chart1.Invoke(d, num);
+            }
+            else
+            {
+                try
+                {
+                    temp.SetValueXY(i, num);
+                    i++;
+                    chart1.Series[0].Points.Add(temp);
+                }
+                catch
+                {
+                }
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             timer1.Start();
             trying = true;
+            if (method == 2)
+            {
+                new_connect();
+                reading = true;
+                timer2.Start();
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if (method == 2)
+            {
+                reading = false;
+                _serialPort.Close();
+            }
             timer1.Stop();
         }
 
@@ -200,7 +292,11 @@ namespace usb_monitor
         private void usbLabDotNetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             method = 1;
-            timer1.Stop();
+            if (method == 2)
+            {
+                reading = false;
+                _serialPort.Close();
+            }
             comboBox1.DataSource = devices_libusb;
         }
 
@@ -249,6 +345,17 @@ namespace usb_monitor
             timer1.Stop();
             comboBox1.DataSource = devices_com;
         }
- 
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            rate = (int)comboBox3.SelectedValue;
+            reading = false;
+            
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            reading = false;
+        }
     }
 }
