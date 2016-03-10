@@ -23,7 +23,7 @@ namespace usb_monitor
         //UsbDeviceFinder MyUsbFinder = new UsbDeviceFinder(Convert.ToInt32("0x046D", 16), Convert.ToInt32("0xC517", 16));
 
         public static UsbDevice MyUsbDevice;
-        List<int> data = new List<int>();
+        List<string> data = new List<string>();
         int i;
         private bool trying;
         private int method;
@@ -31,6 +31,7 @@ namespace usb_monitor
         private List<USBDeviceInfo> devices_libusb;
         private List<USBDeviceInfo> devices_com;
         private bool reading;
+        private SerialPort _serialPort;
 
         public Form1()
         {
@@ -93,11 +94,13 @@ namespace usb_monitor
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (method == 2)
-                //new_connect();
             if (method == 1)
                 connect();
         }
+
+        //
+        //переделать всё
+        //
 
         private void connect()
         {
@@ -138,7 +141,7 @@ namespace usb_monitor
                             Convert.ToDouble(Encoding.Default.GetString(readBuffer, 0, bytesRead).Replace('.', ',')));
                         i++;
                         chart1.Series[0].Points.Add(temp);
-                        data.Add(bytesRead);
+                        data.Add(Encoding.Default.GetString(readBuffer, 0, bytesRead));
                     }
                 }
                 catch
@@ -174,8 +177,6 @@ namespace usb_monitor
             }
         }
 
-        private SerialPort _serialPort;
-
         private void new_connect()
         {
             reading = true;
@@ -188,10 +189,8 @@ namespace usb_monitor
 
         }
 
-        private string fulltext = "";
         private void read()
         {
-            
             while (reading)
             {
                 try
@@ -200,19 +199,32 @@ namespace usb_monitor
                     _serialPort.Read(buffer, 0, _serialPort.BytesToRead);
                     string ans = Encoding.Default.GetString(buffer);
                     SetText(ans);
-                    //SetData(Convert.ToDouble(ans));
+                    tmp += ans;
+                    if (tmp.IndexOf('\n') > 0)
+                    {
+                        try
+                        {
+                            if (double.Parse(tmp.Replace('.', ',')) < 50)
+                            {
+                                SetData(double.Parse(tmp.Replace('.', ',')));
+                                data.Add(tmp.Replace('.', ','));
+                            }
+                        }
+                        catch
+                        {
+                        }
+                        tmp = "";
+                    }
                 }
                 catch
                 {
                 }
-            }
 
+            }
         }
 
-
-        delegate void SetTextCallback(string text);
-
         string tmp = "";
+        delegate void SetTextCallback(string text);
         private void SetText(string text)
         {
 
@@ -225,20 +237,16 @@ namespace usb_monitor
                 }
                 else
                 {
-                    tmp += text;
+
                     textBox2.AppendText(text);
-                    if (tmp.IndexOf('\n') > 0)
-                    {
-                        if(double.Parse(tmp.Replace('.', ','))<50)
-                        SetData(double.Parse(tmp.Replace('.',',')));
-                        tmp = "";
-                    }
+
                 }
             }
             catch
             {
             }
         }
+
         delegate void SetDataCallback(double num);
         private void SetData(double num)
         {
@@ -270,7 +278,6 @@ namespace usb_monitor
             {
                 new_connect();
                 reading = true;
-                timer2.Start();
             }
         }
 
@@ -350,7 +357,6 @@ namespace usb_monitor
         {
             rate = (int)comboBox3.SelectedValue;
             reading = false;
-            
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
