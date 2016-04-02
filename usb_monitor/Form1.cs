@@ -19,8 +19,6 @@ namespace usb_monitor
     public partial class Form1 : Form
     {
         UsbDeviceFinder MyUsbFinder;
-        //= new UsbDeviceFinder(Convert.ToInt32("0x1366", 16), Convert.ToInt32("0x0105", 16));
-        //UsbDeviceFinder MyUsbFinder = new UsbDeviceFinder(Convert.ToInt32("0x046D", 16), Convert.ToInt32("0xC517", 16));
 
         public static UsbDevice MyUsbDevice;
         List<string> data = new List<string>();
@@ -189,6 +187,7 @@ namespace usb_monitor
 
         }
 
+        string tmp = "";
         private void read()
         {
             while (reading)
@@ -207,7 +206,7 @@ namespace usb_monitor
                             if (double.Parse(tmp.Replace('.', ',')) < 50)
                             {
                                 SetData(double.Parse(tmp.Replace('.', ',')));
-                                data.Add(tmp.Replace('.', ','));
+                                data.Add(tmp.Replace('.', ',').Remove('\n'));
                             }
                         }
                         catch
@@ -223,7 +222,6 @@ namespace usb_monitor
             }
         }
 
-        string tmp = "";
         delegate void SetTextCallback(string text);
         private void SetText(string text)
         {
