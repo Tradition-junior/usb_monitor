@@ -178,11 +178,11 @@ namespace usb_monitor
         private void new_connect()
         {
             reading = true;
-            //log(String.Format("Попытка подключиться к {0}", devices_com[comboBox1.SelectedIndex].COM));
+            log(String.Format("Попытка подключиться к {0}", devices_com[comboBox1.SelectedIndex].COM));
             try
             {
-                //_serialPort = new SerialPort(devices_com[comboBox1.SelectedIndex].COM);
-                _serialPort = new SerialPort("COM3");
+                _serialPort = new SerialPort(devices_com[comboBox1.SelectedIndex].COM);
+                //_serialPort = new SerialPort("COM3");
                 _serialPort.BaudRate = rate;
                 _serialPort.ReadTimeout = 1000;
                 _serialPort.Open();
@@ -193,7 +193,7 @@ namespace usb_monitor
             }
             catch (Exception ex)
             {
-                //log(String.Format("Сбой подключения к {0}. {1}", devices_com[comboBox1.SelectedIndex].COM, ex.ToString()));
+                log(String.Format("Сбой подключения к {0}. {1}", devices_com[comboBox1.SelectedIndex].COM, ex.ToString()));
             }
 
         }
