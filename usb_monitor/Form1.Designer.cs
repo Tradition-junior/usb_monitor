@@ -53,6 +53,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.form1BindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.алгоритмToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.пульсToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
@@ -180,7 +182,8 @@
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.способЧтенияToolStripMenuItem});
+            this.способЧтенияToolStripMenuItem,
+            this.алгоритмToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1371, 28);
@@ -256,13 +259,20 @@
             this.label4.TabIndex = 14;
             this.label4.Text = "Baud rate";
             // 
-            // form1BindingSource
+            // алгоритмToolStripMenuItem
             // 
-            this.form1BindingSource.DataSource = typeof(usb_monitor.Form1);
+            this.алгоритмToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.пульсToolStripMenuItem});
+            this.алгоритмToolStripMenuItem.Name = "алгоритмToolStripMenuItem";
+            this.алгоритмToolStripMenuItem.Size = new System.Drawing.Size(89, 24);
+            this.алгоритмToolStripMenuItem.Text = "Алгоритм";
             // 
-            // form1BindingSource1
+            // пульсToolStripMenuItem
             // 
-            this.form1BindingSource1.DataSource = typeof(usb_monitor.Form1);
+            this.пульсToolStripMenuItem.Name = "пульсToolStripMenuItem";
+            this.пульсToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.пульсToolStripMenuItem.Text = "Пульс";
+            this.пульсToolStripMenuItem.Click += new System.EventHandler(this.пульсToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -322,6 +332,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ToolStripMenuItem алгоритмToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem пульсToolStripMenuItem;
     }
 }
 

@@ -36,6 +36,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\LibUsbDotNet.dll</HintPath>
     </Reference>
+    <Reference Include="PulseCalc">
+      <HintPath>.\PulseCalc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />

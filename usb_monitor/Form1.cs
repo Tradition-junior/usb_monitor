@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
 using LibUsbDotNet;
-using LibUsbDotNet.Info;
 using LibUsbDotNet.Main;
+using System.IO;
 using System.IO.Ports;
 using System.Management;
 
@@ -35,6 +33,7 @@ namespace usb_monitor
         {
 
             InitializeComponent();
+            log("Приложение запущено");
             ReadEndpointID[] endpoints =
             {
                 ReadEndpointID.Ep01, ReadEndpointID.Ep02, ReadEndpointID.Ep03,
@@ -60,6 +59,7 @@ namespace usb_monitor
 
         private void get_list()
         {
+            textBox1.Text = "";
             devices_libusb = GetUSBDevices(1);
             devices_com = GetUSBDevices(2);
             List<USBDeviceInfo> tmp_dev = new List<USBDeviceInfo>();
@@ -178,48 +178,71 @@ namespace usb_monitor
         private void new_connect()
         {
             reading = true;
-            _serialPort = new SerialPort(devices_com[comboBox1.SelectedIndex].COM);
-            _serialPort.BaudRate = rate;
-            _serialPort.ReadTimeout = 500;
-            _serialPort.Open();
-            Thread th = new Thread(read);
-            th.Start();
+            //log(String.Format("Попытка подключиться к {0}", devices_com[comboBox1.SelectedIndex].COM));
+            try
+            {
+                //_serialPort = new SerialPort(devices_com[comboBox1.SelectedIndex].COM);
+                _serialPort = new SerialPort("COM3");
+                _serialPort.BaudRate = rate;
+                _serialPort.ReadTimeout = 1000;
+                _serialPort.Open();
+                Thread th = new Thread(read);
+                log(String.Format("Подключились к {0}", devices_com[comboBox1.SelectedIndex].COM));
+                th.Start();
+
+            }
+            catch (Exception ex)
+            {
+                //log(String.Format("Сбой подключения к {0}. {1}", devices_com[comboBox1.SelectedIndex].COM, ex.ToString()));
+            }
 
         }
 
         string tmp = "";
+        byte[] all;
+        int j = 0;
         private void read()
         {
+            log("------Начало чтения-------");
             while (reading)
             {
                 try
                 {
-                    byte[] buffer = new byte[_serialPort.BytesToRead];
-                    _serialPort.Read(buffer, 0, _serialPort.BytesToRead);
-                    string ans = Encoding.Default.GetString(buffer);
-                    SetText(ans);
-                    tmp += ans;
-                    if (tmp.IndexOf('\n') > 0)
+                    int num = _serialPort.BytesToRead;
+                    if (num != 0)
                     {
-                        try
+                        log(string.Format("Читаю"));
+                        byte[] buffer = new byte[num];
+                        _serialPort.Read(buffer, 0, num);
+                        string ans = Encoding.Default.GetString(buffer);
+                        SetText(ans);
+                        tmp += ans;
+                        log(string.Format("Байтов: {0}  Буфер: {1} ", num, ans.Normalize()));
+                        //Строит график, если каждое число разделено признаком конца строки. Конец строки можно заменить на что угодно
+                        //или вообще убрать. 
+                        if (tmp.IndexOf('\n') > 0)
                         {
-                            if (double.Parse(tmp.Replace('.', ',')) < 50)
+                            try
                             {
                                 SetData(double.Parse(tmp.Replace('.', ',')));
-                                data.Add(tmp.Replace('.', ',').Remove('\n'));
+                                //tmp.Remove('\n');
+                                data.Add(tmp.TrimEnd());
                             }
+                            catch
+                            {
+                            }
+                            tmp = "";
                         }
-                        catch
-                        {
-                        }
-                        tmp = "";
                     }
+                    
                 }
-                catch
+                catch(Exception ex)
                 {
+                    log(string.Format("Чтение не удалось. {0}", ex.ToString()));
                 }
 
             }
+            log("------Конец чтения------");
         }
 
         delegate void SetTextCallback(string text);
@@ -360,6 +383,22 @@ namespace usb_monitor
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             reading = false;
+            log("Приложение закрыто\r\n");
+        }
+
+        
+        public static void log(string txt)
+        {
+            try
+            {
+                File.AppendAllText("log.txt", txt + "\r\n");
+            }
+            catch { }
+        }
+          
+        private void пульсToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
