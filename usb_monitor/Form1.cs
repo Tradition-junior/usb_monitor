@@ -400,5 +400,18 @@ namespace usb_monitor
         {
 
         }
+
+        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.ShowDialog();
+        }
+
+        private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            foreach (string s in data)
+            {
+                File.AppendAllText(saveFileDialog1.FileName, s+"\r\n");
+            }
+        }
     }
 }

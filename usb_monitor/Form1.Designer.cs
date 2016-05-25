@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
@@ -46,6 +46,8 @@
             this.способЧтенияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.usbLabDotNetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cOMPortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.алгоритмToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.пульсToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -53,8 +55,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.form1BindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.алгоритмToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.пульсToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.сохранитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
@@ -136,14 +138,14 @@
             // 
             // chart1
             // 
-            chartArea1.AxisX.Minimum = 0D;
-            chartArea1.AxisX.ScaleBreakStyle.CollapsibleSpaceThreshold = 10;
-            chartArea1.AxisX.TitleAlignment = System.Drawing.StringAlignment.Near;
-            chartArea1.AxisY.Interval = 5D;
-            chartArea1.AxisY.MajorGrid.Interval = 5D;
-            chartArea1.CursorX.Interval = 6D;
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
+            chartArea2.AxisX.Minimum = 0D;
+            chartArea2.AxisX.ScaleBreakStyle.CollapsibleSpaceThreshold = 10;
+            chartArea2.AxisX.TitleAlignment = System.Drawing.StringAlignment.Near;
+            chartArea2.AxisY.Interval = 5D;
+            chartArea2.AxisY.MajorGrid.Interval = 5D;
+            chartArea2.CursorX.Interval = 6D;
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
             this.chart1.Location = new System.Drawing.Point(927, 45);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.SemiTransparent;
@@ -156,11 +158,11 @@
         System.Drawing.Color.Empty,
         System.Drawing.Color.Empty};
             this.chart1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.MarkerBorderWidth = 5;
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.MarkerBorderWidth = 5;
+            series2.Name = "Series1";
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(423, 490);
             this.chart1.TabIndex = 7;
             this.chart1.Text = "chart1";
@@ -183,7 +185,8 @@
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.способЧтенияToolStripMenuItem,
-            this.алгоритмToolStripMenuItem});
+            this.алгоритмToolStripMenuItem,
+            this.сохранитьToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1371, 28);
@@ -212,6 +215,21 @@
             this.cOMPortToolStripMenuItem.Size = new System.Drawing.Size(182, 26);
             this.cOMPortToolStripMenuItem.Text = "COM Port";
             this.cOMPortToolStripMenuItem.Click += new System.EventHandler(this.cOMPortToolStripMenuItem_Click);
+            // 
+            // алгоритмToolStripMenuItem
+            // 
+            this.алгоритмToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.пульсToolStripMenuItem});
+            this.алгоритмToolStripMenuItem.Name = "алгоритмToolStripMenuItem";
+            this.алгоритмToolStripMenuItem.Size = new System.Drawing.Size(89, 24);
+            this.алгоритмToolStripMenuItem.Text = "Алгоритм";
+            // 
+            // пульсToolStripMenuItem
+            // 
+            this.пульсToolStripMenuItem.Name = "пульсToolStripMenuItem";
+            this.пульсToolStripMenuItem.Size = new System.Drawing.Size(125, 26);
+            this.пульсToolStripMenuItem.Text = "Пульс";
+            this.пульсToolStripMenuItem.Click += new System.EventHandler(this.пульсToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -259,20 +277,16 @@
             this.label4.TabIndex = 14;
             this.label4.Text = "Baud rate";
             // 
-            // алгоритмToolStripMenuItem
+            // сохранитьToolStripMenuItem
             // 
-            this.алгоритмToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.пульсToolStripMenuItem});
-            this.алгоритмToolStripMenuItem.Name = "алгоритмToolStripMenuItem";
-            this.алгоритмToolStripMenuItem.Size = new System.Drawing.Size(89, 24);
-            this.алгоритмToolStripMenuItem.Text = "Алгоритм";
+            this.сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
+            this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(95, 24);
+            this.сохранитьToolStripMenuItem.Text = "Сохранить";
+            this.сохранитьToolStripMenuItem.Click += new System.EventHandler(this.сохранитьToolStripMenuItem_Click);
             // 
-            // пульсToolStripMenuItem
+            // saveFileDialog1
             // 
-            this.пульсToolStripMenuItem.Name = "пульсToolStripMenuItem";
-            this.пульсToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
-            this.пульсToolStripMenuItem.Text = "Пульс";
-            this.пульсToolStripMenuItem.Click += new System.EventHandler(this.пульсToolStripMenuItem_Click);
+            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
             // Form1
             // 
@@ -334,6 +348,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ToolStripMenuItem алгоритмToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem пульсToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem сохранитьToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 
