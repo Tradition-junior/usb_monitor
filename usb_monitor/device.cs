@@ -8,11 +8,12 @@ namespace usb_monitor
 {
     class USBDeviceInfo
     {
-        public USBDeviceInfo(string deviceID, string pnpDeviceID, string description)
+        public USBDeviceInfo(string deviceID, string pnpDeviceID, string description, string Name)
         {
             this.DeviceID = deviceID;
             this.PnpDeviceID = pnpDeviceID;
             this.Description = description;
+            this.Name = Name;
             parse();
 
         }
@@ -24,12 +25,11 @@ namespace usb_monitor
         public string PID { get; private set; }
         public string COM { get; private set; }
         public bool IfCOM { get; private set; }
-        public string Name {
-            get { return VID + " " + PID; }
-        }
+        public string Name { get; private set; }
+        
     public void parse()
         {
-            string tmp = DeviceID + PnpDeviceID;
+            string tmp = Name + PnpDeviceID + DeviceID;
             int j = tmp.IndexOf("VID_");
             if (j != -1)
             {

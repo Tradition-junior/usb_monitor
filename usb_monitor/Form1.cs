@@ -84,6 +84,48 @@ namespace usb_monitor
             }
         }
 
+        static List<USBDeviceInfo> GetUSBDevices(int type)
+        {
+            List<USBDeviceInfo> devices = new List<USBDeviceInfo>();
+            ManagementObjectCollection collection;
+
+            if (type == 1)
+
+            {
+                using (var searcher = new ManagementObjectSearcher(@"Select * From Win32_USBHub"))
+                    collection = searcher.Get();
+                foreach (var device in collection)
+                {
+                    devices.Add(new USBDeviceInfo(
+                        (string)device.GetPropertyValue("DeviceID"),
+                        (string)device.GetPropertyValue("PNPDeviceID"),
+                        (string)device.GetPropertyValue("Description"),
+                        (string)device.GetPropertyValue("Name")
+                        ));
+                }
+
+                collection.Dispose();
+            }
+
+            if (type == 2)
+            {
+                using (var searcher = new ManagementObjectSearcher(@"SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%(COM[0-9]%'"))
+                    collection = searcher.Get();
+                foreach (var device in collection)
+                {
+                    Console.WriteLine("{0}, {1}, {2}", device.GetPropertyValue("DeviceID"), device.GetPropertyValue("PNPDeviceID"), device.GetPropertyValue("Name"));
+                    devices.Add(new USBDeviceInfo(
+                        (string)device.GetPropertyValue("DeviceID"),
+                        (string)device.GetPropertyValue("PNPDeviceID"),
+                        (string)device.GetPropertyValue("Description"),
+                        (string)device.GetPropertyValue("Name")
+                        ));
+
+                }
+                collection.Dispose();
+            }
+            return devices;
+        }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -328,44 +370,7 @@ namespace usb_monitor
             comboBox1.DataSource = devices_libusb;
         }
 
-        static List<USBDeviceInfo> GetUSBDevices(int type)
-        {
-            List<USBDeviceInfo> devices = new List<USBDeviceInfo>();
-            ManagementObjectCollection collection;
-
-            if (type == 1)
-
-            {
-            using (var searcher = new ManagementObjectSearcher(@"Select * From Win32_USBHub"))
-                collection = searcher.Get();
-            foreach (var device in collection)
-            {
-                devices.Add(new USBDeviceInfo(
-                    (string) device.GetPropertyValue("DeviceID"),
-                    (string) device.GetPropertyValue("PNPDeviceID"),
-                    (string) device.GetPropertyValue("Description")
-                    ));
-            }
-
-            collection.Dispose();
-            }
-
-            if (type == 2)
-            {
-                using (var searcher = new ManagementObjectSearcher(@"Select * From Win32_SerialPort"))
-                    collection = searcher.Get();
-                foreach (var device in collection)
-                {
-                    devices.Add(new USBDeviceInfo(
-                        (string) device.GetPropertyValue("DeviceID"),
-                        (string) device.GetPropertyValue("PNPDeviceID"),
-                        (string) device.GetPropertyValue("Description")
-                        ));
-                }
-                collection.Dispose();
-            }
-            return devices;
-        }
+ 
 
         private void cOMPortToolStripMenuItem_Click(object sender, EventArgs e)
         {
