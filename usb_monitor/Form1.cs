@@ -21,6 +21,8 @@ namespace usb_monitor
         public static UsbDevice MyUsbDevice;
         List<string> data = new List<string>();
         int i;
+        int time;
+        int time2 = 0;
         private bool trying;
         private int method;
         private int rate;
@@ -228,6 +230,8 @@ namespace usb_monitor
                 _serialPort.BaudRate = rate;
                 _serialPort.ReadTimeout = 1000;
                 _serialPort.Open();
+                timer2.Start();
+                time2 = 0;
                 Thread th = new Thread(read);
                 log(String.Format("Подключились к {0}", devices_com[comboBox1.SelectedIndex].COM));
                 th.Start();
@@ -266,9 +270,9 @@ namespace usb_monitor
                         {
                             try
                             {
+                                data.Add(tmp.TrimEnd());
                                 SetData(double.Parse(tmp.Replace('.', ',')));
                                 //tmp.Remove('\n');
-                                data.Add(tmp.TrimEnd());
                             }
                             catch
                             {
@@ -343,7 +347,7 @@ namespace usb_monitor
                 reading = true;
             }
         }
-
+        
         private void button3_Click(object sender, EventArgs e)
         {
             if (method == 2)
@@ -352,6 +356,8 @@ namespace usb_monitor
                 _serialPort.Close();
             }
             timer1.Stop();
+            timer2.Stop();
+
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -400,10 +406,25 @@ namespace usb_monitor
             }
             catch { }
         }
-          
+
         private void пульсToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            time = (timer2.Interval * time2) / 1000;
+            data.RemoveAt(0);
+            float[] x = new float[data.Count];
+            float[] y = new float[data.Count];
+            float[] z = new float[data.Count];
+            for (int i=0; i<data.Count; i++)
+            {
+                string[] t = data[i].Split(' ');
+                x[i] = float.Parse(t[0].Replace('.', ','));
+                y[i] = float.Parse(t[1].Replace('.', ','));
+                z[i] = float.Parse(t[2].Replace('.', ','));
+            }
 
+            int res = PulseCalc.Pulse.Calc(x, y, z, time / data.Count);
+            MessageBox.Show(res.ToString());
+            
         }
 
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -417,6 +438,11 @@ namespace usb_monitor
             {
                 File.AppendAllText(saveFileDialog1.FileName, s+"\r\n");
             }
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            time2++;
         }
     }
 }
