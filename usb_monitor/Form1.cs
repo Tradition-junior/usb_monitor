@@ -21,7 +21,7 @@ namespace usb_monitor
         public static UsbDevice MyUsbDevice;
         List<string> data = new List<string>();
         int i;
-        int time;
+        float time;
         int time2 = 0;
         private bool trying;
         private int method;
@@ -407,20 +407,29 @@ namespace usb_monitor
             catch { }
         }
 
+
+
         private void пульсToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            List<float> x_l = new List<float>();
+            List<float> y_l = new List<float>();
+            List<float> z_l = new List<float>();
             time = (timer2.Interval * time2) / 1000;
-            data.RemoveAt(0);
-            float[] x = new float[data.Count];
-            float[] y = new float[data.Count];
-            float[] z = new float[data.Count];
             for (int i=0; i<data.Count; i++)
             {
                 string[] t = data[i].Split(' ');
-                x[i] = float.Parse(t[0].Replace('.', ','));
-                y[i] = float.Parse(t[1].Replace('.', ','));
-                z[i] = float.Parse(t[2].Replace('.', ','));
+                try
+                {
+                    x_l[i] = float.Parse(t[0].Replace('.', ',')) * (float)9.81;
+                    y_l[i] = float.Parse(t[1].Replace('.', ',')) * (float)9.81;
+                    z_l[i] = float.Parse(t[2].Replace('.', ',')) * (float)9.81;
+                }
+                catch { }
             }
+
+            float[] x = x_l.ToArray();
+            float[] y = y_l.ToArray();
+            float[] z = z_l.ToArray();
 
             int res = PulseCalc.Pulse.Calc(x, y, z, time / data.Count);
             MessageBox.Show(res.ToString());
@@ -443,6 +452,19 @@ namespace usb_monitor
         private void timer2_Tick(object sender, EventArgs e)
         {
             time2++;
+        }
+
+        private data_send d;
+        private void отправитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            d = new data_send();
+            d.Show();
+            d.data_set += send_data;
+        }
+
+        private void send_data(object sender, data_sendEvents e)
+        {
+            _serialPort.Write(e.Text);
         }
     }
 }
