@@ -363,6 +363,7 @@ namespace usb_monitor
         private void button4_Click(object sender, EventArgs e)
         {
             textBox2.Clear();
+            data = new List<string>();
         }
 
         private void usbLabDotNetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -389,6 +390,11 @@ namespace usb_monitor
         {
             rate = (int)comboBox3.SelectedValue;
             reading = false;
+            if (_serialPort != null)
+            {
+                _serialPort.Close();
+                new_connect();
+            }
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -415,23 +421,27 @@ namespace usb_monitor
             List<float> y_l = new List<float>();
             List<float> z_l = new List<float>();
             time = (timer2.Interval * time2) / 1000;
+            data.RemoveAt(0);
             for (int i=0; i<data.Count; i++)
             {
-                string[] t = data[i].Split(' ');
                 try
                 {
-                    x_l[i] = float.Parse(t[0].Replace('.', ',')) * (float)9.81;
-                    y_l[i] = float.Parse(t[1].Replace('.', ',')) * (float)9.81;
-                    z_l[i] = float.Parse(t[2].Replace('.', ',')) * (float)9.81;
+                    string[] t = data[i].Split(' ');
+                    x_l.Add(float.Parse(t[0].Replace('.', ',')) * (float)9.81);
+                    y_l.Add(float.Parse(t[1].Replace('.', ',')) * (float)9.81);
+                    z_l.Add(float.Parse(t[2].Replace('.', ',')) * (float)9.81);
                 }
-                catch { }
+                catch {
+
+                }
+
             }
 
             float[] x = x_l.ToArray();
             float[] y = y_l.ToArray();
             float[] z = z_l.ToArray();
 
-            int res = PulseCalc.Pulse.Calc(x, y, z, time / data.Count);
+            int res = PulseCalc.Pulse.Calc(x, y, z, time / (float)data.Count);
             MessageBox.Show(res.ToString());
             
         }
